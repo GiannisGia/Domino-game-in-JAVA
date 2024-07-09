@@ -14,6 +14,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        Player p=new Player("Giannis");
+
         var label = new Label("Welcome to Domino Game!");
         label.setAlignment(Pos.TOP_CENTER);
         var scene = new Scene(new StackPane(label), 640, 480);
