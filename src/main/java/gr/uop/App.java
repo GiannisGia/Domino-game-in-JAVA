@@ -1,6 +1,7 @@
 package gr.uop;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -13,7 +14,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        var label = new Label("Hello, JavaFX");
+        var label = new Label("Welcome to Domino Game!");
+        label.setAlignment(Pos.TOP_CENTER);
         var scene = new Scene(new StackPane(label), 640, 480);
         stage.setScene(scene);
         stage.show();
