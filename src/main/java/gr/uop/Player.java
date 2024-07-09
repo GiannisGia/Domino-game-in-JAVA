@@ -1,3 +1,5 @@
+package gr.uop;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,9 +13,9 @@ import java.util.Set;
  * @version 0.0.1
  */
 public class Player {
-    private String name;
-    private int score;
-    private Set<Tile> tiles;
+    String name;
+    int score;
+    Set<Tile> tiles;
 
     /**
      * Constructs a player with the specified name.

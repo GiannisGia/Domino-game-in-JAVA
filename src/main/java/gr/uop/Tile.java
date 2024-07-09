@@ -1,3 +1,5 @@
+package gr.uop;
+
 /**
  * The {@code Tile} class respresents a tile in a domino set
  * 
@@ -6,8 +8,8 @@
  * @version 0.0.1
  */
 public class Tile {
-    private int leftValue;
-    private int rightValue;
+    int leftValue;
+    int rightValue;
 
     /**
      * Constructs a tile with the specified values.
