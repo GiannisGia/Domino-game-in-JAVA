@@ -14,9 +14,9 @@ import java.util.Set;
  * @version 0.0.1
  */
 public class GameEngine {
-    List<Player> players;
-    LinkedList<Tile> lineOfPlay; // so we have access on both ends
-    Set<Tile> stock; // no duplicates Tiles
+    private List<Player> players;
+    private LinkedList<Tile> lineOfPlay; // so we have access on both ends
+    private Set<Tile> stock; // no duplicates Tiles
     
     /**
      * Constructs a new GameEngine object with the specified list of players.

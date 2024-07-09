@@ -8,8 +8,8 @@ package gr.uop;
  * @version 0.0.1
  */
 public class Tile {
-    int leftValue;
-    int rightValue;
+    private int leftValue;
+    private int rightValue;
 
     /**
      * Constructs a tile with the specified values.

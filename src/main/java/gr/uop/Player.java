@@ -13,9 +13,9 @@ import java.util.Set;
  * @version 0.0.1
  */
 public class Player {
-    String name;
-    int score;
-    Set<Tile> tiles;
+    private String name;
+    private int score;
+    private Set<Tile> tiles;
 
     /**
      * Constructs a player with the specified name.
