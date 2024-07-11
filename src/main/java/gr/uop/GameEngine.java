@@ -17,6 +17,7 @@ public class GameEngine {
     private List<Player> players;
     private LinkedList<Tile> lineOfPlay; // so we have access on both ends
     private Set<Tile> stock; // no duplicates Tiles
+    private int currentPlayerIndex; // Track the current player index
     
     /**
      * Constructs a new GameEngine object with the specified list of players.
@@ -27,9 +28,9 @@ public class GameEngine {
         this.players = players;
         this.lineOfPlay = new LinkedList<>();
         this.stock = generateStock();
+        this.currentPlayerIndex = 0; // Initialize the current player index
         distributeTiles();
     }
-
 
     /**
      * Generates a set of tiles representing the stock for the game.
@@ -45,10 +46,10 @@ public class GameEngine {
                 stock.add(new Tile(i, j));
             }
         }
-        // shufle the stock so each run get a new order of the tiles
+        // Shuffle the stock so each run gets a new order of the tiles
         List<Tile> stockList = new ArrayList<>(stock);
         Collections.shuffle(stockList);
-        // return the stockList as a new LinkedHashSet
+        // Return the stockList as a new LinkedHashSet
         return new LinkedHashSet<>(stockList);
     }
 
@@ -89,7 +90,7 @@ public class GameEngine {
     public List<Integer> getOpenEnds() {
         List<Integer> openEnds = new ArrayList<>();
 
-        // check that is not the first move of the game
+        // Check that it's not the first move of the game
         if(!lineOfPlay.isEmpty()) {
             Tile firstTile =  lineOfPlay.getFirst();
             Tile lastTile = lineOfPlay.getLast();
@@ -119,45 +120,62 @@ public class GameEngine {
     public boolean playTile(Player player, Tile tile) {
 
         if (lineOfPlay.isEmpty()) {
-            // first move of the game 
-            // lineOfPlay is empty
+            // First move of the game 
+            // Line of play is empty
             lineOfPlay.add(tile);
             player.removeTile(tile);
+            advanceToNextPlayer();
             return true;
-        }
-        else {
-            // line of play contains tiles 
-            // check each combination
+        } else {
+            // Line of play contains tiles 
+            // Check each combination
             Tile firstTile = lineOfPlay.getFirst();
             Tile lastTile = lineOfPlay.getLast();
 
             if (tile.getleftValue()== firstTile.getleftValue()) {
-                // we need to add the tile rotated 180
+                // We need to add the tile rotated 180
                 lineOfPlay.addFirst(new Tile(tile.getRightValue(), tile.getleftValue()));
                 player.removeTile(tile);
+                advanceToNextPlayer();
                 return true;
-            }
-            else if (tile.getRightValue() == firstTile.getleftValue()) {
-                // tile is ok, no need for any other transformation
+            } else if (tile.getRightValue() == firstTile.getleftValue()) {
+                // Tile is okay, no need for any other transformation
                 lineOfPlay.addFirst(tile);
                 player.removeTile(tile);
+                advanceToNextPlayer();
                 return true;
-            }
-            else if (tile.getleftValue() == lastTile.getRightValue()) {
-                // tile is ok, no need for any other transformation
+            } else if (tile.getleftValue() == lastTile.getRightValue()) {
+                // Tile is okay, no need for any other transformation
                 lineOfPlay.addLast(tile);
                 player.removeTile(tile);
+                advanceToNextPlayer();
                 return true;
-            }
-            else if (tile.getRightValue() == lastTile.getRightValue()) {
-                // we need to add the tile rotated 180
+            } else if (tile.getRightValue() == lastTile.getRightValue()) {
+                // We need to add the tile rotated 180
                 lineOfPlay.addLast(new Tile(tile.getRightValue(), tile.getleftValue()));
                 player.removeTile(tile);
+                advanceToNextPlayer();
                 return true;
             } 
         }
-        // not a valid move
+        // Not a valid move
         return false;
+    }
+
+    /**
+     * Advances to the next player in the list, cycling back to the first player if necessary.
+     */
+    private void advanceToNextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
+    }
+
+    /**
+     * Returns the current player whose turn it is.
+     *
+     * @return the current player
+     */
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
     }
 
     /**
@@ -172,16 +190,17 @@ public class GameEngine {
             Tile tile = stock.iterator().next();
             player.addTile(tile);
             stock.remove(tile);
-        }
-        else {
+            advanceToNextPlayer();
+        } else {
             System.out.println("Stock is empty");
         }
     }
 
     /**
-     * Check if the game is over by iterating over Players tiles.
-     * If the player's tiles are empty, game stops
-     * @return {@code true} if a player has no left tiles,
+     * Check if the game is over by iterating over players' tiles.
+     * If the player's tiles are empty, the game stops.
+     *
+     * @return {@code true} if a player has no tiles left,
      * otherwise {@code false}
      */
     public boolean isGameOver() {
@@ -194,57 +213,18 @@ public class GameEngine {
     }
     
     /**
-     * Method to find the winner of the domino game based on the tiles remaining
-     * on each player. The player with the fewest 
+     * Determines the winner of the game based on the scores of the players.
+     * The player with the lowest score wins.
+     *
      * @return the winner of the game
-     * @see #calculateScore
      */
-    // public Player getWinner() {
-    //     Player winner = players.get(0);
-    //     calculateScore(winner);
-    //     int minScore = winner.getScore();
-    //     for (Player player : players) {
-    //         if (players.indexOf(player) != 0) {
-    //             calculateScore(player);
-    //             int score = player.getScore();
-    //             if (player.getScore() < minScore) {
-    //                 minScore = score;
-    //                 winner = player;
-    //             }
-    //         }
-    //     }
-    //     System.out.println("Inside getWinner score is: " + winner.getScore());
-    //     return winner;
-    // }
-
-    // private void calculateScore(Player player) {
-    //     int score = 0;
-    //     for (Tile tile : player.getTiles()) {
-    //         int sum = tile.getleftValue() + tile.getRightValue();
-    //         score += sum;
-    //         player.updateScore(score);
-    //     }
-        
-    // }
-
-    // FIXME getWinner by score
     public Player determineWinner() {
         Player winner = players.get(0);
-        // int test = calculateScore(winner);
-        // winner.updateScore(test);
-        int test = 0;
-        for (Tile tile : winner.getTiles()) {
-            test = test + tile.getTileSum(tile);
-        }
-        winner.updateScore(test);
-        int minScore = winner.getScore();
+        int minScore = calculateScore(winner);
+        winner.updateScore(minScore);
         for (Player player : players) {
-            test = 0;
-            for (Tile tile : player.getTiles()) {
-                test = test + tile.getTileSum(tile);
-            }
-            player.updateScore(test);
-            int score = player.getScore();
+            int score = calculateScore(player);
+            player.updateScore(score);
             if (score < minScore) {
                 minScore = score;
                 winner = player;
@@ -253,13 +233,17 @@ public class GameEngine {
         return winner;
     }
 
-    // FIXME the score of the player, it's not working
+    /**
+     * Calculates the score of a player based on the sum of their tiles' values.
+     *
+     * @param player the player whose score is to be calculated
+     * @return the calculated score
+     */
     private int calculateScore(Player player) {
         int score = 0;
         for (Tile tile : player.getTiles()) {
-            score = score + tile.getTileSum(tile);
+            score += tile.getTileSum(tile);
         }
-        // player.updateScore(score);
         return score;
     }
 
